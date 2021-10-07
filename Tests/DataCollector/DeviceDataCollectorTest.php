@@ -49,7 +49,7 @@ class DeviceDataCollectorTest extends TestCase
         $this->requestStack = $this->getMockBuilder('Symfony\Component\HttpFoundation\RequestStack')->disableOriginalConstructor()->getMock();
         $this->requestStack->expects($this->any())
             #->method('getMainRequest')
-            ->method(SymfonyCompatibilityLayer::getMasterRequestFunctionName())
+            ->method(SymfonyCompatibilityLayer::getMainRequestFunctionName())
             ->will($this->returnValue($this->request))
         ;
 

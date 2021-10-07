@@ -23,9 +23,9 @@ class SymfonyCompatibilityLayer
     public const MAIN_REQUEST = 1;
     public const MASTER_REQUEST = 1;
 
-    public static function getMasterRequestFunctionName(): string
+    public static function getMainRequestFunctionName(): string
     {
-        if (version_compare(Kernel::VERSION, '5.3.0', '>='))
+        if(method_exists(RequestStack::class, 'getMainRequest'))
         {return "getMainRequest";}
 
         return "getMasterRequest";
@@ -33,7 +33,7 @@ class SymfonyCompatibilityLayer
 
     public static function getMainRequest(RequestStack $requestStack = null): ?Request
     {
-        if (version_compare(Kernel::VERSION, '5.3.0', '>='))
+        if(method_exists(RequestStack::class, 'getMainRequest'))
         {return $requestStack->getMainRequest();}
 
         return $requestStack->getMasterRequest();
