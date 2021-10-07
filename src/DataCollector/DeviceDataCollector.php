@@ -26,39 +26,21 @@ use Throwable;
  */
 class DeviceDataCollector extends DataCollector
 {
-    /**
-     * @var DeviceView
-     */
-    protected $deviceView;
+    protected array $redirectConfig;
 
-    /**
-     * @var array
-     */
-    protected $redirectConfig;
-
-    /**
-     * DeviceDataCollector constructor.
-     *
-     * @param DeviceView $deviceView Device View Detector
-     */
-    public function __construct(DeviceView $deviceView)
+    public function __construct(protected DeviceView $deviceView)
     {
-        $this->deviceView = $deviceView;
     }
 
     /**
      * Collects data for the given Request and Response.
-     *
-     * @param Request $request A Request instance
-     * @param Response $response A Response instance
-     * @param Throwable|null $exception An Exception instance
      *
      * @api
      */
     public function collect(
         Request $request,
         Response $response,
-        Throwable $exception = null
+        Throwable|null $exception = null
     ) {
         $this->data['currentView'] = $this->deviceView->getViewType();
         $this->data['views'] = array(
@@ -166,7 +148,7 @@ class DeviceDataCollector extends DataCollector
         $requestSwitchView->server->set(
             'QUERY_STRING',
             Request::normalizeQueryString(
-                http_build_query($requestSwitchView->query->all(), null, '&')
+                http_build_query($requestSwitchView->query->all())
             )
         );
 
