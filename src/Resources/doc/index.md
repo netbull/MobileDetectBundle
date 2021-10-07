@@ -1,55 +1,6 @@
 MobileDetectBundle
 =============
 
-Symfony 4/5/6 bundle for detect mobile devices, manage mobile view and redirect to the mobile and tablet version.
-
-
-Switch device view
-------------------
-
-For switch device view, use `device_view` GET parameter:
-
-````
-http://site.com?device_view={full/mobile/tablet}
-````
-
-  Installation
-  ------------
-
-  ### Composer
-
-  #### For Symfony >= 2.4
-
-  Run command:
-  `composer require "netbull/mobile-detect-bundle:1.0.*"`
-
-  Or add to `composer.json` in your project to `require` section:
-
-  ```json
-{
-  "netbull/mobile-detect-bundle": "1.0.*"
-}
-```
-and run command:
-`php composer.phar update`
-
-> For Symfony < 2.4 use `0.10.x` version of this bundle
-
-
-### Add this bundle to your application's kernel
-
-```php
-//app/AppKernel.php
-public function registerBundles()
-{
-    return array(
-         // ...
-        new SunCat\MobileDetectBundle\MobileDetectBundle(),
-        // ...
-    );
-}
-```
-
 ### Full configuration
 
 You can change default behaviour of your redirects with action parameter:
@@ -59,29 +10,29 @@ You can change default behaviour of your redirects with action parameter:
 - `redirect_without_path`: redirects to appropriate host index page
 
 ```yaml
-#app/conﬁg/conﬁg.yml
+#conﬁg/conﬁg.yml
 mobile_detect:
     redirect:
         full:
             is_enabled: true            # default false
-            host: http://site.com       # with scheme (http|https), default null, url validate
+            host: https://site.com       # with scheme (http|https), default null, url validate
             status_code: 301            # default 302
             action: redirect            # redirect, no_redirect, redirect_without_path
         mobile:
             is_enabled: true            # default false
-            host: http://m.site.com     # with scheme (http|https), default null, url validate
+            host: https://m.site.com     # with scheme (http|https), default null, url validate
             status_code: 301            # default 302
             action: redirect            # redirect, no_redirect, redirect_without_path
         tablet:
             is_enabled: true            # default false
-            host: http://t.site.com     # with scheme (http|https), default null, url validate
+            host: https://t.site.com     # with scheme (http|https), default null, url validate
             status_code: 301            # default 302
             action: redirect            # redirect, no_redirect, redirect_without_path
         detect_tablet_as_mobile: true   # default false
     switch_device_view:
         save_referer_path: false        # default true
-                                        # true  redirectUrl = http://site.com/current/path?currentQuery=string
-                                        # false redirectUrl = http://site.com
+                                        # true  redirectUrl = https://site.com/current/path?currentQuery=string
+                                        # false redirectUrl = https://site.com
     service:
         mobile_detector: mobile_detect.mobile_detector.default
     cookie_key: "device_view"                     # default
@@ -102,11 +53,6 @@ someaction:
     defaults: { _controller: YourBundle:Index:someAction }
     options:  { mobile: redirect, tablet: no_redirect, full: redirect_without_path }         # redirect, no_redirect, redirect_without_path
 ```
-
-### Migration 0.10.x to 1.0.x config changes
-
-* Change: `request_listener_class` for `request_response_listener_class`.
-* Change: `extension_class` for `twig_extension_class`.
 
 ### Symfony toolbar
 ![](https://raw.githubusercontent.com/suncat2000/MobileDetectBundle/master/Resources/doc/sf-toolbar.png)
@@ -174,8 +120,8 @@ Twig Helper
 ```
 
 ```jinja
-{{ full_view_url() }}       # with current path and query. http://fullsite.com/current/path?param1=value1&param2=value2
-{{ full_view_url(false) }}  # to configure host only (without /current/path?param1=value1&param2=value2). http://fullsite.com
+{{ full_view_url() }}       # with current path and query. https://fullsite.com/current/path?param1=value1&param2=value2
+{{ full_view_url(false) }}  # to configure host only (without /current/path?param1=value1&param2=value2). https://fullsite.com
 <a href="{{ full_view_url() }}" title="Full view">Full view</a>
 ```
 
@@ -213,11 +159,11 @@ Usage Example:
 
 #### Setting up redirection to and from a mobile site that is the same Symfony 2 instance as your main site.
 
-In this example, let's assume that you have a website http://site.com and you wish to activate
-redirection to a mobile site http://m.site.com when the user is using a mobile device.
+In this example, let's assume that you have a website https://site.com and you wish to activate
+redirection to a mobile site https://m.site.com when the user is using a mobile device.
 
-Additionally, when a user with a desktop browser reaches the mobile site http://m.site.com, he
-should be redirected to the full version at http://site.com.
+Additionally, when a user with a desktop browser reaches the mobile site https://m.site.com, he
+should be redirected to the full version at https://site.com.
 
 1. **Set up mobile redirection to your config.yml**
 
@@ -226,15 +172,15 @@ should be redirected to the full version at http://site.com.
         redirect:
             mobile:
                 is_enabled: true
-                host: http://m.site.com
+                host: https://m.site.com
                 status_code: 301
                 action: redirect
             tablet: ~
         switch_device_view: ~
     ```
 
-    Now when you hit http://site.com with a mobile device, you are redirected to http://m.site.com.
-    At this point if the http://m.site.com is configured to point to your project, you will get circular reference error.
+    Now when you hit https://site.com with a mobile device, you are redirected to https://m.site.com.
+    At this point if the https://m.site.com is configured to point to your project, you will get circular reference error.
     To get rid of the circular reference error, we want to disable mobile redirecting when we land on our mobile site.
 
 2. **Create a new `app.php` file with a name like, for example, `app_mobile.php` and change the following:**
@@ -270,11 +216,11 @@ should be redirected to the full version at http://site.com.
             tablet: ~
             full:
                 is_enabled: true
-                host: http://site.com
+                host: https://site.com
         switch_device_view: ~
     ```
 
-4. **Configure your http server: Make sure that in your http server virtual host, you make http://m.site.com use `app_mobile.php` as its script file
+4. **Configure your http server: Make sure that in your http server virtual host, you make https://m.site.com use `app_mobile.php` as its script file
     instead of `app.php`.**
 
     After you have restarted your http server everything should work.

@@ -11,6 +11,7 @@
 
 namespace SunCat\MobileDetectBundle\Twig\Extension;
 
+use JetBrains\PhpStorm\Pure;
 use Mobile_Detect;
 use SunCat\MobileDetectBundle\DeviceDetector\MobileDetector;
 use SunCat\MobileDetectBundle\Helper\DeviceView;
@@ -26,34 +27,13 @@ use Twig\TwigFunction;
  */
 class MobileDetectExtension extends AbstractExtension
 {
-    /**
-     * @var MobileDetector
-     */
-    private $mobileDetector;
+    private ?Request $request = null;
 
-    /**
-     * @var DeviceView
-     */
-    private $deviceView;
-
-    /**
-     * @var array
-     */
-    private $redirectConf;
-
-    /**
-     * @var Request
-     */
-    private $request;
-
-    /**
-     * MobileDetectExtension constructor.
-     */
-    public function __construct(MobileDetector $mobileDetector, DeviceView $deviceView, array $redirectConf)
+    public function __construct(
+        private MobileDetector $mobileDetector,
+        private DeviceView $deviceView,
+        private array $redirectConf)
     {
-        $this->mobileDetector = $mobileDetector;
-        $this->deviceView = $deviceView;
-        $this->redirectConf = $redirectConf;
     }
 
     /**
@@ -78,7 +58,7 @@ class MobileDetectExtension extends AbstractExtension
 
     /**
      * Check the version of the given property in the User-Agent.
-     * Will return a float number. (eg. 2_0 will return 2.0, 4.3.1 will return 4.31)
+     * Will return a float number. (e.g. 2_0 will return 2.0, 4.3.1 will return 4.31)
      *
      * @param string $propertyName The name of the property. See self::getProperties() array
      *                             keys for all possible properties.
@@ -89,7 +69,7 @@ class MobileDetectExtension extends AbstractExtension
      *
      * @return string|float The version of the property we are trying to extract.
      */
-    public function deviceVersion(string $propertyName, string $type = Mobile_Detect::VERSION_TYPE_STRING)
+    public function deviceVersion(string $propertyName, string $type = Mobile_Detect::VERSION_TYPE_STRING): float|string
     {
         return $this->mobileDetector->version($propertyName, $type);
     }
@@ -98,7 +78,7 @@ class MobileDetectExtension extends AbstractExtension
      * Regardless of the current view, returns the URL that leads to the equivalent page
      * in the full/desktop view. This is useful for generating <link rel="canonical"> tags
      * on mobile pages for Search Engine Optimization.
-     * See: http://searchengineland.com/the-definitive-guide-to-mobile-technical-seo-166066
+     * See: https://searchengineland.com/the-definitive-guide-to-mobile-technical-seo-166066
      */
     public function fullViewUrl(bool $addCurrentPathAndQuery = true): ?string
     {
@@ -133,17 +113,11 @@ class MobileDetectExtension extends AbstractExtension
         return $result;
     }
 
-    /**
-     * Is mobile
-     */
     public function isMobile(): bool
     {
         return $this->mobileDetector->isMobile();
     }
 
-    /**
-     * Is tablet
-     */
     public function isTablet(): bool
     {
         return $this->mobileDetector->isTablet();
@@ -161,59 +135,40 @@ class MobileDetectExtension extends AbstractExtension
         return $this->mobileDetector->$magicMethodName();
     }
 
-    /**
-     * Is full view type
-     */
+    #[Pure]
     public function isFullView(): bool
     {
         return $this->deviceView->isFullView();
     }
 
-    /**
-     * Is mobile view type
-     */
+    #[Pure]
     public function isMobileView(): bool
     {
         return $this->deviceView->isMobileView();
     }
 
-    /**
-     * Is tablet view type
-     */
+    #[Pure]
     public function isTabletView(): bool
     {
         return $this->deviceView->isTabletView();
     }
 
-    /**
-     * Is not mobile view type
-     */
+    #[Pure]
     public function isNotMobileView(): bool
     {
         return $this->deviceView->isNotMobileView();
     }
 
-    /**
-     * Is iOS
-     */
     public function isIOS(): bool
     {
         return $this->mobileDetector->isIOS();
     }
 
-    /**
-     * Is Android OS
-     */
     public function isAndroidOS(): bool
     {
         return $this->mobileDetector->isAndroidOS();
     }
 
-    /**
-     * Sets the request from the current scope.
-     *
-     * @param RequestStack|null $requestStack
-     */
     public function setRequestByRequestStack(?RequestStack $requestStack = null)
     {
         if (null !== $requestStack) {

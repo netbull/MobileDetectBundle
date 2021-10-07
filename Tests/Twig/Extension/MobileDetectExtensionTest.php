@@ -10,33 +10,14 @@ use SunCat\MobileDetectBundle\Twig\Extension\MobileDetectExtension;
 use Symfony\Component\HttpFoundation\ParameterBag;
 use \Twig\TwigFunction;
 
-/**
- * DeviceView Test
- */
 class MobileDetectExtensionTest extends TestCase
 {
-    /**
-     * @var MockBuilder
-     */
-    private $mobileDetector;
-
-    /**
-     * @var MockBuilder
-     */
-    private $requestStack;
-
-    /**
-     * @var array
-     */
-    private $config;
-
-    /**
-     * @var MockObject
-     */
-    private $request;
-
-    private $cookieKey = DeviceView::COOKIE_KEY_DEFAULT;
-    private $switchParam = DeviceView::SWITCH_PARAM_DEFAULT;
+    private mixed $mobileDetector;
+    private mixed $requestStack;
+    private array $config;
+    private MockObject $request;
+    private string $cookieKey = DeviceView::COOKIE_KEY_DEFAULT;
+    private string $switchParam = DeviceView::SWITCH_PARAM_DEFAULT;
 
     /**
      * Set up
@@ -128,11 +109,11 @@ class MobileDetectExtensionTest extends TestCase
      */
     public function fullViewUrlNotSetRequest()
     {
-        $this->config['full'] = array('is_enabled' => true, 'host' => 'http://mobilehost.com');
+        $this->config['full'] = array('is_enabled' => true, 'host' => 'https://mobilehost.com');
 
         $deviceView = new DeviceView($this->requestStack);
         $extension = new MobileDetectExtension($this->mobileDetector, $deviceView, $this->config);
-        $this->assertEquals('http://mobilehost.com', $extension->fullViewUrl());
+        $this->assertEquals('https://mobilehost.com', $extension->fullViewUrl());
     }
 
     /**
@@ -140,13 +121,13 @@ class MobileDetectExtensionTest extends TestCase
      */
     public function fullViewUrlWithRequestQuery()
     {
-        $this->config['full'] = array('is_enabled' => true, 'host' => 'http://mobilehost.com');
+        $this->config['full'] = array('is_enabled' => true, 'host' => 'https://mobilehost.com');
 
         $this->request->query = new ParameterBag(array('myparam'=>'myvalue'));
         $deviceView = new DeviceView($this->requestStack);
         $extension = new MobileDetectExtension($this->mobileDetector, $deviceView, $this->config);
         $extension->setRequestByRequestStack($this->requestStack);
-        $this->assertEquals('http://mobilehost.com?myparam=myvalue', $extension->fullViewUrl());
+        $this->assertEquals('https://mobilehost.com?myparam=myvalue', $extension->fullViewUrl());
     }
 
     /**
@@ -154,13 +135,13 @@ class MobileDetectExtensionTest extends TestCase
      */
     public function fullViewUrlWithRequestOnlyHost()
     {
-        $this->config['full'] = array('is_enabled' => true, 'host' => 'http://mobilehost.com');
+        $this->config['full'] = array('is_enabled' => true, 'host' => 'https://mobilehost.com');
 
         $this->request->query = new ParameterBag(array('myparam'=>'myvalue'));
         $deviceView = new DeviceView($this->requestStack);
         $extension = new MobileDetectExtension($this->mobileDetector, $deviceView, $this->config);
         $extension->setRequestByRequestStack($this->requestStack);
-        $this->assertEquals('http://mobilehost.com', $extension->fullViewUrl(false));
+        $this->assertEquals('https://mobilehost.com', $extension->fullViewUrl(false));
     }
 
     /**
