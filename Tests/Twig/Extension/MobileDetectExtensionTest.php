@@ -19,9 +19,6 @@ class MobileDetectExtensionTest extends TestCase
     private string $cookieKey = DeviceView::COOKIE_KEY_DEFAULT;
     private string $switchParam = DeviceView::SWITCH_PARAM_DEFAULT;
 
-    /**
-     * Set up
-     */
     public function setUp(): void
     {
         parent::setUp();
