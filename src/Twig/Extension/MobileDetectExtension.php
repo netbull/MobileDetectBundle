@@ -15,6 +15,7 @@ use JetBrains\PhpStorm\Pure;
 use Mobile_Detect;
 use SunCat\MobileDetectBundle\DeviceDetector\MobileDetector;
 use SunCat\MobileDetectBundle\Helper\DeviceView;
+use SunCat\MobileDetectBundle\Helper\SymfonyCompatibilityLayer;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Twig\Extension\AbstractExtension;
@@ -172,7 +173,8 @@ class MobileDetectExtension extends AbstractExtension
     public function setRequestByRequestStack(?RequestStack $requestStack = null)
     {
         if (null !== $requestStack) {
-            $this->request = $requestStack->getMainRequest();
+            #$this->request = $requestStack->getMainRequest();
+            $this->request = SymfonyCompatibilityLayer::getMainRequest($requestStack);
         }
     }
 }

@@ -17,6 +17,7 @@ use PHPUnit\Framework\MockObject\MockBuilder;
 use SunCat\MobileDetectBundle\DataCollector\DeviceDataCollector;
 use SunCat\MobileDetectBundle\EventListener\RequestResponseListener;
 use SunCat\MobileDetectBundle\Helper\DeviceView;
+use SunCat\MobileDetectBundle\Helper\SymfonyCompatibilityLayer;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\ParameterBag;
 use Symfony\Component\HttpFoundation\Response;
@@ -47,7 +48,8 @@ class DeviceDataCollectorTest extends TestCase
 
         $this->requestStack = $this->getMockBuilder('Symfony\Component\HttpFoundation\RequestStack')->disableOriginalConstructor()->getMock();
         $this->requestStack->expects($this->any())
-            ->method('getMainRequest')
+            #->method('getMainRequest')
+            ->method(SymfonyCompatibilityLayer::getMasterRequestFunctionName())
             ->will($this->returnValue($this->request))
         ;
 

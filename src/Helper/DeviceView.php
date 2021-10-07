@@ -54,7 +54,8 @@ class DeviceView
 
     public function __construct(RequestStack $requestStack = null)
     {
-        if (!$requestStack || !$this->request = $requestStack->getMainRequest()) {
+        #if (!$requestStack || !$this->request = $requestStack->getMainRequest()) {
+        if (!$requestStack || !$this->request = SymfonyCompatibilityLayer::getMainRequest($requestStack)) {
             $this->viewType = self::VIEW_NOT_MOBILE;
             return;
         }
