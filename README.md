@@ -3,6 +3,8 @@
 MobileDetectBundle
 =============
 
+[![Code_Checks](https://github.com/netbull/MobileDetectBundle/actions/workflows/code_checks.yaml/badge.svg)](https://github.com/netbull/MobileDetectBundle/actions/workflows/code_checks.yaml)
+
 Symfony 4/5/6 bundle for detect mobile devices, manage mobile view and redirect to the mobile and tablet version.
 
 http://knpbundles.com/
