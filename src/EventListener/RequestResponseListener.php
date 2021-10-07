@@ -15,6 +15,7 @@ use Closure;
 use SunCat\MobileDetectBundle\DeviceDetector\MobileDetector;
 use SunCat\MobileDetectBundle\Helper\DeviceView;
 use SunCat\MobileDetectBundle\Helper\RedirectResponseWithCookie;
+use SunCat\MobileDetectBundle\Helper\SymfonyCompatibilityLayer;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
@@ -59,7 +60,8 @@ class RequestResponseListener
     {
         // only handle main request, do not handle sub request like esi includes
         // If the device view is "not the mobile view" (e.g. we're not in the request context)
-        if (($event->getRequestType() !== HttpKernelInterface::MAIN_REQUEST) || $this->deviceView->isNotMobileView()) {
+        #if (($event->getRequestType() !== HttpKernelInterface::MAIN_REQUEST) || $this->deviceView->isNotMobileView()) {
+        if (($event->getRequestType() !== SymfonyCompatibilityLayer::MAIN_REQUEST) || $this->deviceView->isNotMobileView()) {
             return;
         }
 

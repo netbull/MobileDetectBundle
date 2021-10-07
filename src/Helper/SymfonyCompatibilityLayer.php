@@ -20,8 +20,8 @@ use Symfony\Component\HttpKernel\Kernel;
  */
 class SymfonyCompatibilityLayer
 {
-    #public const MASTER_REQUEST = self::MAIN_REQUEST;
-
+    public const MAIN_REQUEST = 1;
+    public const MASTER_REQUEST = 1;
 
     public static function getMasterRequestFunctionName(): string
     {

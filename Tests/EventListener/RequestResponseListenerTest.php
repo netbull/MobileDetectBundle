@@ -7,6 +7,7 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\MockObject\MockBuilder;
 use SunCat\MobileDetectBundle\EventListener\RequestResponseListener;
 use SunCat\MobileDetectBundle\Helper\DeviceView;
+use SunCat\MobileDetectBundle\Helper\SymfonyCompatibilityLayer;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\HeaderBag;
 use Symfony\Component\HttpFoundation\Response;
@@ -682,7 +683,8 @@ class RequestResponseListenerTest extends TestCase
         $event = new ViewEvent(
             $this->createMock('Symfony\Component\HttpKernel\HttpKernelInterface'),
             $this->request,
-            HttpKernelInterface::MAIN_REQUEST,
+            #HttpKernelInterface::MAIN_REQUEST,
+            SymfonyCompatibilityLayer::MAIN_REQUEST,
             $content
         );
         $event->getRequest()->headers = new HeaderBag($headers);
@@ -696,7 +698,8 @@ class RequestResponseListenerTest extends TestCase
         $event = new ResponseEvent(
             $this->createMock('Symfony\Component\HttpKernel\HttpKernelInterface'),
             $this->request,
-            HttpKernelInterface::MAIN_REQUEST,
+            #HttpKernelInterface::MAIN_REQUEST,
+            SymfonyCompatibilityLayer::MAIN_REQUEST,
             $response
         );
         $event->getRequest()->headers = new HeaderBag($headers);
