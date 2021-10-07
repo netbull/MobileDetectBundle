@@ -105,7 +105,7 @@ class MobileDetectExtension extends AbstractExtension
         // if fullHost ends with /, skip it since getPathInfo() also starts with /
         $result = rtrim($fullHost, '/').$this->request->getPathInfo();
 
-        $query = Request::normalizeQueryString(http_build_query($this->request->query->all(), null, '&'));
+        $query = Request::normalizeQueryString(http_build_query($this->request->query->all()));
         if ($query) {
             $result .= '?'.$query;
         }
