@@ -148,7 +148,7 @@ class DeviceDataCollector extends DataCollector
         $requestSwitchView->server->set(
             'QUERY_STRING',
             Request::normalizeQueryString(
-                http_build_query($requestSwitchView->query->all(), null, '&')
+                http_build_query($requestSwitchView->query->all())
             )
         );
 
