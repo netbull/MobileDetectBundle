@@ -13,13 +13,12 @@ namespace SunCat\MobileDetectBundle\Tests\DataCollector;
 
 use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\MockObject\MockObject;
-use PHPUnit\Framework\MockObject\MockBuilder;
 use SunCat\MobileDetectBundle\DataCollector\DeviceDataCollector;
 use SunCat\MobileDetectBundle\EventListener\RequestResponseListener;
 use SunCat\MobileDetectBundle\Helper\DeviceView;
 use SunCat\MobileDetectBundle\Helper\SymfonyCompatibilityLayer;
+use Symfony\Component\HttpFoundation\InputBag;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\ParameterBag;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ServerBag;
 
@@ -41,8 +40,8 @@ class DeviceDataCollectorTest extends TestCase
 
         $this->mobileDetector = $this->getMockBuilder('SunCat\MobileDetectBundle\DeviceDetector\MobileDetector')->disableOriginalConstructor()->getMock();
         $this->request = $this->getMockBuilder('Symfony\Component\HttpFoundation\Request')->getMock();
-        $this->request->query = new ParameterBag();
-        $this->request->cookies = new ParameterBag();
+        $this->request->query = new InputBag();
+        $this->request->cookies = new InputBag();
         $this->request->server = new ServerBag();
         $this->request->expects($this->any())->method('duplicate')->will($this->returnValue($this->request));
 
@@ -67,7 +66,7 @@ class DeviceDataCollectorTest extends TestCase
             'status_code' => Response::HTTP_FOUND,
             'action' => RequestResponseListener::REDIRECT
         );
-        $this->request->cookies = new ParameterBag(array(DeviceView::COOKIE_KEY_DEFAULT => DeviceView::VIEW_MOBILE));
+        $this->request->cookies = new InputBag(array(DeviceView::COOKIE_KEY_DEFAULT => DeviceView::VIEW_MOBILE));
         $deviceView = new DeviceView($this->requestStack);
         $deviceDataCollector = new DeviceDataCollector($deviceView);
         $deviceDataCollector->setRedirectConfig($redirectConfig);
@@ -104,7 +103,7 @@ class DeviceDataCollectorTest extends TestCase
             'status_code' => Response::HTTP_FOUND,
             'action' => RequestResponseListener::REDIRECT
         );
-        $this->request->query = new ParameterBag(array('param1' => 'value1'));
+        $this->request->query = new InputBag(array('param1' => 'value1'));
         $this->request->expects($this->any())->method('getHost')->will($this->returnValue('testsite.com'));
         $this->request->expects($this->any())->method('getSchemeAndHttpHost')->will($this->returnValue('https://testsite.com'));
         $this->request->expects($this->any())->method('getBaseUrl')->will($this->returnValue('/base-url'));
@@ -122,7 +121,7 @@ class DeviceDataCollectorTest extends TestCase
 
             return $test->request->getSchemeAndHttpHost().$test->request->getBaseUrl().$test->request->getPathInfo().$qs;
         }));
-        $this->request->cookies = new ParameterBag(array(DeviceView::COOKIE_KEY_DEFAULT => DeviceView::VIEW_MOBILE));
+        $this->request->cookies = new InputBag(array(DeviceView::COOKIE_KEY_DEFAULT => DeviceView::VIEW_MOBILE));
         $deviceView = new DeviceView($this->requestStack);
         $deviceDataCollector = new DeviceDataCollector($deviceView);
         $deviceDataCollector->setRedirectConfig($redirectConfig);
@@ -170,7 +169,7 @@ class DeviceDataCollectorTest extends TestCase
             'status_code' => Response::HTTP_FOUND,
             'action' => RequestResponseListener::REDIRECT
         );
-        $this->request->query = new ParameterBag(array('param1' => 'value1'));
+        $this->request->query = new InputBag(array('param1' => 'value1'));
         $this->request->expects($this->any())->method('getHost')->will($this->returnValue('testsite.com'));
         $this->request->expects($this->any())->method('getSchemeAndHttpHost')->will($this->returnValue('https://testsite.com'));
         $this->request->expects($this->any())->method('getBaseUrl')->will($this->returnValue('/base-url'));
@@ -188,7 +187,7 @@ class DeviceDataCollectorTest extends TestCase
 
             return $test->request->getSchemeAndHttpHost().$test->request->getBaseUrl().$test->request->getPathInfo().$qs;
         }));
-        $this->request->cookies = new ParameterBag(array(DeviceView::COOKIE_KEY_DEFAULT => DeviceView::VIEW_FULL));
+        $this->request->cookies = new InputBag(array(DeviceView::COOKIE_KEY_DEFAULT => DeviceView::VIEW_FULL));
         $deviceView = new DeviceView($this->requestStack);
         $deviceDataCollector = new DeviceDataCollector($deviceView);
         $deviceDataCollector->setRedirectConfig($redirectConfig);
@@ -236,7 +235,7 @@ class DeviceDataCollectorTest extends TestCase
             'status_code' => Response::HTTP_FOUND,
             'action' => RequestResponseListener::REDIRECT
         );
-        $this->request->query = new ParameterBag(array('param1' => 'value1'));
+        $this->request->query = new InputBag(array('param1' => 'value1'));
         $this->request->expects($this->any())->method('getHost')->will($this->returnValue('testsite.com'));
         $this->request->expects($this->any())->method('getSchemeAndHttpHost')->will($this->returnValue('https://testsite.com'));
         $this->request->expects($this->any())->method('getBaseUrl')->will($this->returnValue('/base-url'));
@@ -254,7 +253,7 @@ class DeviceDataCollectorTest extends TestCase
 
             return $test->request->getSchemeAndHttpHost().$test->request->getBaseUrl().$test->request->getPathInfo().$qs;
         }));
-        $this->request->cookies = new ParameterBag(array(DeviceView::COOKIE_KEY_DEFAULT => DeviceView::VIEW_FULL));
+        $this->request->cookies = new InputBag(array(DeviceView::COOKIE_KEY_DEFAULT => DeviceView::VIEW_FULL));
         $deviceView = new DeviceView($this->requestStack);
         $deviceDataCollector = new DeviceDataCollector($deviceView);
         $deviceDataCollector->setRedirectConfig($redirectConfig);
