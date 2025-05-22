@@ -17,6 +17,7 @@ use PHPUnit\Framework\MockObject\MockBuilder;
 use SunCat\MobileDetectBundle\DataCollector\DeviceDataCollector;
 use SunCat\MobileDetectBundle\EventListener\RequestResponseListener;
 use SunCat\MobileDetectBundle\Helper\DeviceView;
+use SunCat\MobileDetectBundle\Helper\SymfonyCompatibilityLayer;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\ParameterBag;
 use Symfony\Component\HttpFoundation\Response;
@@ -29,29 +30,11 @@ use Symfony\Component\HttpFoundation\ServerBag;
  */
 class DeviceDataCollectorTest extends TestCase
 {
-    /**
-     * @var MockObject
-     */
-    private $mobileDetector;
+    private MockObject $mobileDetector;
+    private mixed $requestStack;
+    private MockObject $request;
+    private MockObject $response;
 
-    /**
-     * @var MockBuilder
-     */
-    private $requestStack;
-
-    /**
-     * @var MockObject
-     */
-    private $request;
-
-    /**
-     * @var MockObject
-     */
-    private $response;
-
-    /**
-     * Set up
-     */
     public function setUp(): void
     {
         parent::setUp();
@@ -65,7 +48,8 @@ class DeviceDataCollectorTest extends TestCase
 
         $this->requestStack = $this->getMockBuilder('Symfony\Component\HttpFoundation\RequestStack')->disableOriginalConstructor()->getMock();
         $this->requestStack->expects($this->any())
-            ->method('getMainRequest')
+            #->method('getMainRequest')
+            ->method(SymfonyCompatibilityLayer::getMainRequestFunctionName())
             ->will($this->returnValue($this->request))
         ;
 
@@ -79,7 +63,7 @@ class DeviceDataCollectorTest extends TestCase
     {
         $redirectConfig['tablet'] = array(
             'is_enabled' => true,
-            'host' => 'http://testsite.com',
+            'host' => 'https://testsite.com',
             'status_code' => Response::HTTP_FOUND,
             'action' => RequestResponseListener::REDIRECT
         );
@@ -116,13 +100,13 @@ class DeviceDataCollectorTest extends TestCase
     {
         $redirectConfig['tablet'] = array(
             'is_enabled' => true,
-            'host' => 'http://testsite.com',
+            'host' => 'https://testsite.com',
             'status_code' => Response::HTTP_FOUND,
             'action' => RequestResponseListener::REDIRECT
         );
         $this->request->query = new ParameterBag(array('param1' => 'value1'));
         $this->request->expects($this->any())->method('getHost')->will($this->returnValue('testsite.com'));
-        $this->request->expects($this->any())->method('getSchemeAndHttpHost')->will($this->returnValue('http://testsite.com'));
+        $this->request->expects($this->any())->method('getSchemeAndHttpHost')->will($this->returnValue('https://testsite.com'));
         $this->request->expects($this->any())->method('getBaseUrl')->will($this->returnValue('/base-url'));
         $this->request->expects($this->any())->method('getPathInfo')->will($this->returnValue('/path-info'));
         $test = $this;
@@ -166,7 +150,7 @@ class DeviceDataCollectorTest extends TestCase
                 $this->assertTrue($view['enabled']);
                 $this->assertEquals(
                     sprintf(
-                        'http://testsite.com/base-url/path-info?%s=%s&param1=value1',
+                        'https://testsite.com/base-url/path-info?%s=%s&param1=value1',
                         $deviceView->getSwitchParam(),
                         DeviceView::VIEW_TABLET
                     ), $view['link']
@@ -182,13 +166,13 @@ class DeviceDataCollectorTest extends TestCase
     {
         $redirectConfig['tablet'] = array(
             'is_enabled' => true,
-            'host' => 'http://testsite.com',
+            'host' => 'https://testsite.com',
             'status_code' => Response::HTTP_FOUND,
             'action' => RequestResponseListener::REDIRECT
         );
         $this->request->query = new ParameterBag(array('param1' => 'value1'));
         $this->request->expects($this->any())->method('getHost')->will($this->returnValue('testsite.com'));
-        $this->request->expects($this->any())->method('getSchemeAndHttpHost')->will($this->returnValue('http://testsite.com'));
+        $this->request->expects($this->any())->method('getSchemeAndHttpHost')->will($this->returnValue('https://testsite.com'));
         $this->request->expects($this->any())->method('getBaseUrl')->will($this->returnValue('/base-url'));
         $this->request->expects($this->any())->method('getPathInfo')->will($this->returnValue('/path-info'));
         $test = $this;
@@ -232,7 +216,7 @@ class DeviceDataCollectorTest extends TestCase
                 $this->assertTrue($view['enabled']);
                 $this->assertEquals(
                     sprintf(
-                        'http://testsite.com/base-url/path-info?%s=%s&param1=value1',
+                        'https://testsite.com/base-url/path-info?%s=%s&param1=value1',
                         $deviceView->getSwitchParam(),
                         DeviceView::VIEW_MOBILE
                     ), $view['link']
@@ -248,13 +232,13 @@ class DeviceDataCollectorTest extends TestCase
     {
         $redirectConfig['mobile'] = array(
             'is_enabled' => true,
-            'host' => 'http://m.testsite.com',
+            'host' => 'https://m.testsite.com',
             'status_code' => Response::HTTP_FOUND,
             'action' => RequestResponseListener::REDIRECT
         );
         $this->request->query = new ParameterBag(array('param1' => 'value1'));
         $this->request->expects($this->any())->method('getHost')->will($this->returnValue('testsite.com'));
-        $this->request->expects($this->any())->method('getSchemeAndHttpHost')->will($this->returnValue('http://testsite.com'));
+        $this->request->expects($this->any())->method('getSchemeAndHttpHost')->will($this->returnValue('https://testsite.com'));
         $this->request->expects($this->any())->method('getBaseUrl')->will($this->returnValue('/base-url'));
         $this->request->expects($this->any())->method('getPathInfo')->will($this->returnValue('/path-info'));
         $test = $this;
@@ -298,7 +282,7 @@ class DeviceDataCollectorTest extends TestCase
                 $this->assertFalse($view['enabled']);
                 $this->assertEquals(
                     sprintf(
-                        'http://testsite.com/base-url/path-info?%s=%s&param1=value1',
+                        'https://testsite.com/base-url/path-info?%s=%s&param1=value1',
                         $deviceView->getSwitchParam(),
                         DeviceView::VIEW_MOBILE
                     ), $view['link']

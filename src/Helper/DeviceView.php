@@ -13,7 +13,9 @@ namespace SunCat\MobileDetectBundle\Helper;
 
 use Datetime;
 use Exception;
+use JetBrains\PhpStorm\Pure;
 use Symfony\Component\HttpFoundation\Cookie;
+use Symfony\Component\HttpFoundation\InputBag;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
@@ -38,68 +40,22 @@ class DeviceView
     const COOKIE_EXPIRE_DATETIME_MODIFIER_DEFAULT = '1 month';
     const SWITCH_PARAM_DEFAULT = 'device_view';
 
-    /**
-     * @var Request
-     */
-    protected $request;
+    protected ?Request $request = null;
+    protected string|int|bool|null|float|InputBag $requestedViewType = null;
+    protected string|int|bool|null|float|InputBag $viewType = null;
+    protected string $cookieKey = self::COOKIE_KEY_DEFAULT;
+    protected string $cookiePath = self::COOKIE_PATH_DEFAULT;
+    protected string $cookieDomain = self::COOKIE_DOMAIN_DEFAULT;
+    protected bool $cookieSecure = self::COOKIE_SECURE_DEFAULT;
+    protected bool $cookieHttpOnly = self::COOKIE_HTTP_ONLY_DEFAULT;
+    protected string $cookieExpireDatetimeModifier = self::COOKIE_EXPIRE_DATETIME_MODIFIER_DEFAULT;
+    protected string $switchParam = self::SWITCH_PARAM_DEFAULT;
+    protected array $redirectConfig;
 
-    /**
-     * @var string|null
-     */
-    protected $requestedViewType;
-
-    /**
-     * @var string|null
-     */
-    protected $viewType;
-
-    /**
-     * @var string
-     */
-    protected $cookieKey = self::COOKIE_KEY_DEFAULT;
-
-    /**
-     * @var string
-     */
-    protected $cookiePath = self::COOKIE_PATH_DEFAULT;
-
-    /**
-     * @var string
-     */
-    protected $cookieDomain = self::COOKIE_DOMAIN_DEFAULT;
-
-    /**
-     * @var bool
-     */
-    protected $cookieSecure = self::COOKIE_SECURE_DEFAULT;
-
-    /**
-     * @var bool
-     */
-    protected $cookieHttpOnly = self::COOKIE_HTTP_ONLY_DEFAULT;
-
-    /**
-     * @var string
-     */
-    protected $cookieExpireDatetimeModifier = self::COOKIE_EXPIRE_DATETIME_MODIFIER_DEFAULT;
-
-    /**
-     * @var string
-     */
-    protected $switchParam = self::SWITCH_PARAM_DEFAULT;
-
-    /**
-     * @var array
-     */
-    protected $redirectConfig;
-
-    /**
-     * DeviceView constructor.
-     * @param RequestStack|null $requestStack
-     */
     public function __construct(RequestStack $requestStack = null)
     {
-        if (!$requestStack || !$this->request = $requestStack->getMainRequest()) {
+        #if (!$requestStack || !$this->request = $requestStack->getMainRequest()) {
+        if (!$requestStack || !$this->request = SymfonyCompatibilityLayer::getMainRequest($requestStack)) {
             $this->viewType = self::VIEW_NOT_MOBILE;
             return;
         }
@@ -123,33 +79,22 @@ class DeviceView
 
     /**
      * Gets the view type that has explicitly been requested either by switch param, or by cookie.
-     *
-     * @return string|null The requested view type or null if no view type has been explicitly requested.
      */
     public function getRequestedViewType(): ?string
     {
         return $this->requestedViewType;
     }
 
-    /**
-     * Is the device in full view.
-     */
     public function isFullView(): bool
     {
         return $this->viewType === self::VIEW_FULL;
     }
 
-    /**
-     * Is the device a tablet view type.
-     */
     public function isTabletView(): bool
     {
         return $this->viewType === self::VIEW_TABLET;
     }
 
-    /**
-     * Is the device a mobile view type.
-     */
     public function isMobileView(): bool
     {
         return $this->viewType === self::VIEW_MOBILE;
@@ -166,46 +111,32 @@ class DeviceView
     /**
      * Has the Request the switch param in the query string (GET header).
      */
+    #[Pure]
     public function hasSwitchParam(): bool
     {
         return $this->request && $this->request->query->has($this->switchParam);
     }
 
-    /**
-     * Sets the view type.
-     */
     public function setView(string $view)
     {
         $this->viewType = $view;
     }
 
-    /**
-     * Sets the full (desktop) view type.
-     */
     public function setFullView()
     {
         $this->viewType = self::VIEW_FULL;
     }
 
-    /**
-     * Sets the tablet view type.
-     */
     public function setTabletView()
     {
         $this->viewType = self::VIEW_TABLET;
     }
 
-    /**
-     * Sets the mobile view type.
-     */
     public function setMobileView()
     {
         $this->viewType = self::VIEW_MOBILE;
     }
 
-    /**
-     * Sets the not mobile view type.
-     */
     public function setNotMobileView()
     {
         $this->viewType = self::VIEW_NOT_MOBILE;
@@ -213,8 +144,6 @@ class DeviceView
 
     /**
      * Gets the switch param value from the query string (GET header).
-     *
-     * @return string|null
      */
     public function getSwitchParamValue(): ?string
     {
@@ -264,11 +193,6 @@ class DeviceView
 
     /**
      * Modifies the Response for the specified device view.
-     *
-     * @param string $view The device view for which the response should be modified.
-     * @param Response $response
-     *
-     * @return Response
      */
     public function modifyResponse(string $view, Response $response): Response
     {
@@ -277,15 +201,6 @@ class DeviceView
         return $response;
     }
 
-    /**
-     * Gets the RedirectResponse for the specified device view.
-     *
-     * @param string $view The device view for which we want the RedirectResponse.
-     * @param string $host Uri host
-     * @param int $statusCode Status code
-     *
-     * @return RedirectResponseWithCookie
-     */
     public function getRedirectResponse(string $view, string $host, int $statusCode): RedirectResponseWithCookie
     {
         return new RedirectResponseWithCookie($host, $this->createCookie($view), $statusCode);

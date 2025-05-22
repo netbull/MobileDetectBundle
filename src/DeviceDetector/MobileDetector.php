@@ -19,6 +19,7 @@ use Detection\MobileDetect;
  * @author suncat2000 <nikolay.kotovsky@gmail.com>
  *
  */
-class MobileDetector extends MobileDetect implements MobileDetectorInterface
+class MobileDetector extends MobileDetect
+#class MobileDetector extends MobileDetect implements MobileDetectorInterface
 {
 }

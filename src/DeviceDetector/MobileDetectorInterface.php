@@ -15,7 +15,6 @@ namespace SunCat\MobileDetectBundle\DeviceDetector;
  * MobileDetectorInterface interface
  *
  * @author pierrickmartos <pierrick.martos@gmail.com>
- *
  */
 interface MobileDetectorInterface
 {
@@ -26,29 +25,24 @@ interface MobileDetectorInterface
      * @param  null $httpHeaders deprecated
      * @return bool
      */
-    public function isMobile($userAgent = null, $httpHeaders = null);
+    public function isMobile($userAgent = null, $httpHeaders = null): bool;
 
     /**
      * Check if the device is a tablet.
      * Return true if any type of tablet device is detected.
      *
-     * @param  string $userAgent   deprecated
-     * @param  array  $httpHeaders deprecated
+     * @param string|null $userAgent   deprecated
+     * @param array|null $httpHeaders deprecated
      * @return bool
      */
-    public function isTablet($userAgent = null, $httpHeaders = null);
+    public function isTablet(string $userAgent = null, array $httpHeaders = null): bool;
 
     /**
-     * This method checks for a certain property in the
-     * userAgent.
-     * @todo: The httpHeaders part is not yet used.
+     * This method checks for a certain property in the userAgent.
+     *@todo: The httpHeaders part is not yet used.
      *
-     * @param  string        $key
-     * @param  string        $userAgent   deprecated
-     * @param  string        $httpHeaders deprecated
-     * @return bool|int|null
      */
-    public function is($key, $userAgent = null, $httpHeaders = null);
+    public function is(string $key, string $userAgent = null, string $httpHeaders = null): bool|int|null;
 
     /**
      * Some detection rules are relative (not standard),
@@ -59,18 +53,14 @@ interface MobileDetectorInterface
      * This method will be used to check custom regexes against
      * the User-Agent string.
      *
-     * @param $regex
-     * @param  string $userAgent
-     * @return bool
-     *
      * @todo: search in the HTTP headers too.
      */
-    public function match($regex, $userAgent = null);
+    public function match(string $regex, string|null $userAgent = null): bool;
 
     /**
      * Retrieve the mobile grading, using self::MOBILE_GRADE_* constants.
      *
      * @return string One of the self::MOBILE_GRADE_* constants.
      */
-    public function mobileGrade();
+    public function mobileGrade(): string;
 }

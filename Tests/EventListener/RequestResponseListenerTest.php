@@ -7,7 +7,7 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\MockObject\MockBuilder;
 use SunCat\MobileDetectBundle\EventListener\RequestResponseListener;
 use SunCat\MobileDetectBundle\Helper\DeviceView;
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use SunCat\MobileDetectBundle\Helper\SymfonyCompatibilityLayer;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\HeaderBag;
 use Symfony\Component\HttpFoundation\Response;
@@ -20,44 +20,18 @@ use Symfony\Component\HttpFoundation\ParameterBag;
  * Request and Response Listener Test
  */
 class RequestResponseListenerTest extends TestCase
-#class RequestResponseListenerTest extends WebTestCase
 {
-    /**
-     * @var MockBuilder
-     */
-    private $mobileDetector;
+    private mixed $mobileDetector;
+    private mixed $deviceView;
+    private mixed $requestStack;
 
-    /**
-     * @var MockBuilder
-     */
-    private $deviceView;
+    private MockObject $request;
+    private MockObject $router;
 
-    /**
-     * @var MockBuilder
-     */
-    private $requestStack;
+    private array $config;
+    private string $cookieKey = DeviceView::COOKIE_KEY_DEFAULT;
+    private string $switchParam = DeviceView::SWITCH_PARAM_DEFAULT;
 
-    /**
-     * @var MockObject
-     */
-    private $request;
-
-    /**
-     * @var MockObject
-     */
-    private $router;
-
-    /**
-     * @var array
-     */
-    private $config;
-
-    private $cookieKey = DeviceView::COOKIE_KEY_DEFAULT;
-    private $switchParam = DeviceView::SWITCH_PARAM_DEFAULT;
-
-    /**
-     * Set up
-     */
     public function setUp(): void
     {
         parent::setUp();
@@ -124,7 +98,7 @@ class RequestResponseListenerTest extends TestCase
      */
     public function handleRequestHasSwitchParamAndQuery()
     {
-        $this->config['mobile'] = array('is_enabled' => true, 'host' => 'http://mobilehost.com');
+        $this->config['mobile'] = array('is_enabled' => true, 'host' => 'https://mobilehost.com');
 
         $this->request->query = new ParameterBag(array('myparam' => 'myvalue', $this->switchParam => DeviceView::VIEW_MOBILE));
         $this->request->expects($this->any())->method('getPathInfo')->will($this->returnValue('/'));
@@ -148,7 +122,7 @@ class RequestResponseListenerTest extends TestCase
         $this->assertInstanceOf('SunCat\MobileDetectBundle\Helper\RedirectResponseWithCookie', $response);
         $this->assertEquals(Response::HTTP_FOUND, $response->getStatusCode());
         $this->assertEquals(sprintf(
-            'http://mobilehost.com/?%s=%s&myparam=myvalue',
+            'https://mobilehost.com/?%s=%s&myparam=myvalue',
             $this->switchParam,
             DeviceView::VIEW_MOBILE
             ), $response->getTargetUrl()
@@ -239,7 +213,7 @@ class RequestResponseListenerTest extends TestCase
      */
     public function handleRequestHasTabletRedirect()
     {
-        $this->config['tablet'] = array('is_enabled' => true, 'host' => 'http://testsite.com', 'status_code' => Response::HTTP_FOUND);
+        $this->config['tablet'] = array('is_enabled' => true, 'host' => 'https://testsite.com', 'status_code' => Response::HTTP_FOUND);
 
         $this->request->query = new ParameterBag(array('some'=>'param'));
         $this->request->expects($this->any())->method('getPathInfo')->will($this->returnValue('/some/parameters'));
@@ -266,7 +240,7 @@ class RequestResponseListenerTest extends TestCase
         $this->assertInstanceOf('SunCat\MobileDetectBundle\Helper\RedirectResponseWithCookie', $response);
         $this->assertEquals(Response::HTTP_FOUND, $response->getStatusCode());
         $this->assertEquals(sprintf(
-                'http://testsite.com/some/parameters?%s=%s&some=param',
+                'https://testsite.com/some/parameters?%s=%s&some=param',
                 $this->switchParam,
                 DeviceView::VIEW_TABLET
             ), $response->getTargetUrl()
@@ -288,7 +262,7 @@ class RequestResponseListenerTest extends TestCase
      */
     public function handleRequestWithDifferentSwitchParamRedirect()
     {
-        $this->config['tablet'] = array('is_enabled' => true, 'host' => 'http://testsite.com', 'status_code' => Response::HTTP_FOUND);
+        $this->config['tablet'] = array('is_enabled' => true, 'host' => 'https://testsite.com', 'status_code' => Response::HTTP_FOUND);
 
         $switchParam = 'custom_param';
 
@@ -319,7 +293,7 @@ class RequestResponseListenerTest extends TestCase
         $this->assertInstanceOf('SunCat\MobileDetectBundle\Helper\RedirectResponseWithCookie', $response);
         $this->assertEquals(Response::HTTP_FOUND, $response->getStatusCode());
         $this->assertEquals(sprintf(
-                'http://testsite.com/some/parameters?%s=%s&some=param',
+                'https://testsite.com/some/parameters?%s=%s&some=param',
                 $switchParam,
                 DeviceView::VIEW_TABLET
             ), $response->getTargetUrl()
@@ -341,7 +315,7 @@ class RequestResponseListenerTest extends TestCase
      */
     public function handleDeviceIsTabletAndTabletRedirectIsDisabledAndDetectTabletAsMobileIsFalse()
     {
-        $this->config['mobile'] = array('is_enabled' => true, 'host' => 'http://mobilehost.com');
+        $this->config['mobile'] = array('is_enabled' => true, 'host' => 'https://mobilehost.com');
 
         $this->mobileDetector->expects($this->once())->method('isTablet')->will($this->returnValue(true));
 
@@ -383,7 +357,7 @@ class RequestResponseListenerTest extends TestCase
      */
     public function handleDeviceIsTabletAsMobileAndTabletRedirectIsDisabledAndDetectTabletAsMobileIsTrue()
     {
-        $this->config['mobile'] = array('is_enabled' => true, 'host' => 'http://mobilehost.com', 'status_code' => Response::HTTP_FOUND);
+        $this->config['mobile'] = array('is_enabled' => true, 'host' => 'https://mobilehost.com', 'status_code' => Response::HTTP_FOUND);
         $this->config['detect_tablet_as_mobile'] = true;
 
         $this->request->expects($this->any())->method('getPathInfo')->will($this->returnValue('/some/parameters'));
@@ -411,7 +385,7 @@ class RequestResponseListenerTest extends TestCase
         $this->assertInstanceOf('SunCat\MobileDetectBundle\Helper\RedirectResponseWithCookie', $response);
         $this->assertEquals(Response::HTTP_FOUND, $response->getStatusCode());
         $this->assertEquals(sprintf(
-                'http://mobilehost.com/some/parameters?%s=%s',
+                'https://mobilehost.com/some/parameters?%s=%s',
                 $this->switchParam,
                 DeviceView::VIEW_MOBILE
             ), $response->getTargetUrl()
@@ -433,7 +407,7 @@ class RequestResponseListenerTest extends TestCase
      */
     public function handleRequestHasTabletRedirectWithoutPath()
     {
-        $this->config['tablet'] = array('is_enabled' => true, 'host' => 'http://testsite.com', 'status_code' => Response::HTTP_FOUND);
+        $this->config['tablet'] = array('is_enabled' => true, 'host' => 'https://testsite.com', 'status_code' => Response::HTTP_FOUND);
 
         $this->request->expects($this->any())->method('getPathInfo')->will($this->returnValue('/some/parameters'));
         $this->request->expects($this->any())->method('get')->will($this->returnValue('routeName'));
@@ -459,9 +433,9 @@ class RequestResponseListenerTest extends TestCase
 
         $this->assertInstanceOf('SunCat\MobileDetectBundle\Helper\RedirectResponseWithCookie', $response);
         $this->assertEquals(Response::HTTP_FOUND, $response->getStatusCode());
-        $this->assertEquals('http://testsite.com?device_view=tablet', $response->getTargetUrl());
+        $this->assertEquals('https://testsite.com?device_view=tablet', $response->getTargetUrl());
         $this->assertEquals(sprintf(
-                'http://testsite.com?%s=%s',
+                'https://testsite.com?%s=%s',
                 $this->switchParam,
                 DeviceView::VIEW_TABLET
             ), $response->getTargetUrl()
@@ -483,7 +457,7 @@ class RequestResponseListenerTest extends TestCase
      */
     public function handleRequestHasTabletNoRedirect()
     {
-        $this->config['tablet'] = array('is_enabled' => true, 'host' => 'http://testsite.com', 'status_code' => Response::HTTP_FOUND);
+        $this->config['tablet'] = array('is_enabled' => true, 'host' => 'https://testsite.com', 'status_code' => Response::HTTP_FOUND);
 
         $this->request->expects($this->any())->method('getPathInfo')->will($this->returnValue('/some/parameters'));
         $this->request->expects($this->any())->method('get')->will($this->returnValue('routeName'));
@@ -533,7 +507,7 @@ class RequestResponseListenerTest extends TestCase
      */
     public function handleRequestHasMobileRedirect()
     {
-        $this->config['mobile'] = array('is_enabled' => true, 'host' => 'http://testsite.com', 'status_code' => Response::HTTP_FOUND);
+        $this->config['mobile'] = array('is_enabled' => true, 'host' => 'https://testsite.com', 'status_code' => Response::HTTP_FOUND);
 
         $this->request->expects($this->any())->method('getPathInfo')->will($this->returnValue('/some/parameters'));
         $this->request->expects($this->any())->method('get')->will($this->returnValue('routeName'));
@@ -561,7 +535,7 @@ class RequestResponseListenerTest extends TestCase
         $this->assertInstanceOf('SunCat\MobileDetectBundle\Helper\RedirectResponseWithCookie', $response);
         $this->assertEquals(Response::HTTP_FOUND, $response->getStatusCode());
         $this->assertEquals(sprintf(
-                'http://testsite.com/some/parameters?%s=%s',
+                'https://testsite.com/some/parameters?%s=%s',
                 $this->switchParam,
                 DeviceView::VIEW_MOBILE
             ), $response->getTargetUrl()
@@ -583,7 +557,7 @@ class RequestResponseListenerTest extends TestCase
      */
     public function handleRequestHasMobileRedirectWithoutPath()
     {
-        $this->config['mobile'] = array('is_enabled' => true, 'host' => 'http://testsite.com', 'status_code' => Response::HTTP_FOUND);
+        $this->config['mobile'] = array('is_enabled' => true, 'host' => 'https://testsite.com', 'status_code' => Response::HTTP_FOUND);
 
         $this->request->expects($this->any())->method('getPathInfo')->will($this->returnValue('/some/parameters'));
         $this->request->expects($this->any())->method('get')->will($this->returnValue('routeName'));
@@ -611,7 +585,7 @@ class RequestResponseListenerTest extends TestCase
         $this->assertInstanceOf('SunCat\MobileDetectBundle\Helper\RedirectResponseWithCookie', $response);
         $this->assertEquals(Response::HTTP_FOUND, $response->getStatusCode());
         $this->assertEquals(sprintf(
-                'http://testsite.com?%s=%s',
+                'https://testsite.com?%s=%s',
                 $this->switchParam,
                 DeviceView::VIEW_MOBILE
             ), $response->getTargetUrl()
@@ -633,7 +607,7 @@ class RequestResponseListenerTest extends TestCase
      */
     public function handleRequestHasMobileNoRedirect()
     {
-        $this->config['mobile'] = array('is_enabled' => true, 'host' => 'http://testsite.com', 'status_code' => 123);
+        $this->config['mobile'] = array('is_enabled' => true, 'host' => 'https://testsite.com', 'status_code' => 123);
 
         $this->request->expects($this->any())->method('getPathInfo')->will($this->returnValue('/some/parameters'));
         $this->request->expects($this->any())->method('get')->will($this->returnValue('routeName'));
@@ -709,7 +683,8 @@ class RequestResponseListenerTest extends TestCase
         $event = new ViewEvent(
             $this->createMock('Symfony\Component\HttpKernel\HttpKernelInterface'),
             $this->request,
-            HttpKernelInterface::MAIN_REQUEST,
+            #HttpKernelInterface::MAIN_REQUEST,
+            SymfonyCompatibilityLayer::MAIN_REQUEST,
             $content
         );
         $event->getRequest()->headers = new HeaderBag($headers);
@@ -723,7 +698,8 @@ class RequestResponseListenerTest extends TestCase
         $event = new ResponseEvent(
             $this->createMock('Symfony\Component\HttpKernel\HttpKernelInterface'),
             $this->request,
-            HttpKernelInterface::MAIN_REQUEST,
+            #HttpKernelInterface::MAIN_REQUEST,
+            SymfonyCompatibilityLayer::MAIN_REQUEST,
             $response
         );
         $event->getRequest()->headers = new HeaderBag($headers);

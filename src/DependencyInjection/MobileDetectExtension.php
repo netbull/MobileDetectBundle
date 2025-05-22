@@ -69,9 +69,6 @@ class MobileDetectExtension extends Extension
         $container->setAlias('mobile_detect.mobile_detector', $config['service']['mobile_detector']);
     }
 
-    /**
-     * Validate host
-     */
     protected function validHost(string $url): bool
     {
         $pattern = "/^(?:(http|https):\/\/)([A-Z0-9][A-Z0-9_-]*(?:\.[A-Z0-9][A-Z0-9_-]*)+):?(\d+)?\/?/i";

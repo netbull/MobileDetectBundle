@@ -3,34 +3,18 @@
 namespace SunCat\MobileDetectBundle\Tests\Helper;
 
 use PHPUnit\Framework\TestCase;
-use PHPUnit\Framework\MockObject\MockBuilder;
-use PHPUnit\Framework\MockObject\MockObject;
 use SunCat\MobileDetectBundle\Helper\DeviceView;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
-/**
- * DeviceView Test
- */
 class DeviceViewTest extends TestCase
 {
-    /**
-     * @var MockBuilder
-     */
-    private $requestStack;
+    private mixed $requestStack;
+    private mixed $request;
+    private string $cookieKey = DeviceView::COOKIE_KEY_DEFAULT;
+    private string $switchParam = DeviceView::SWITCH_PARAM_DEFAULT;
 
-    /**
-     * @var MockObject
-     */
-    private $request;
-
-    private $cookieKey = DeviceView::COOKIE_KEY_DEFAULT;
-    private $switchParam = DeviceView::SWITCH_PARAM_DEFAULT;
-
-    /**
-     * Set up
-     */
     public function setUp(): void
     {
         parent::setUp();
@@ -371,14 +355,13 @@ class DeviceViewTest extends TestCase
         $this->request->query = new ParameterBag();
         $deviceView = new DeviceView($this->requestStack);
         $response = new Response();
-        $this->assertEquals(0, count($response->headers->getCookies()));
+        $this->assertCount(0, $response->headers->getCookies());
         $deviceView->modifyResponse(DeviceView::VIEW_MOBILE, $response);
 
         $cookies = $response->headers->getCookies();
         $this->assertGreaterThan(0, count($cookies));
         foreach ($cookies as $cookie) {
             $this->assertInstanceOf('Symfony\Component\HttpFoundation\Cookie', $cookie);
-            /* @var Cookie $cookie */
             if ($cookie->getName() == $deviceView->getCookieKey()) {
                 $this->assertEquals(DeviceView::VIEW_MOBILE, $cookie->getValue());
             }
@@ -392,14 +375,13 @@ class DeviceViewTest extends TestCase
     {
         $this->request->query = new ParameterBag();
         $deviceView = new DeviceView($this->requestStack);
-        $response = $deviceView->getRedirectResponse(DeviceView::VIEW_MOBILE, 'http://mobilesite.com', 302);
+        $response = $deviceView->getRedirectResponse(DeviceView::VIEW_MOBILE, 'https://mobilesite.com', 302);
         $this->assertInstanceOf('SunCat\MobileDetectBundle\Helper\RedirectResponseWithCookie', $response);
         $this->assertEquals(302, $response->getStatusCode());
         $cookies = $response->headers->getCookies();
         $this->assertGreaterThan(0, count($cookies));
         foreach ($cookies as $cookie) {
             $this->assertInstanceOf('Symfony\Component\HttpFoundation\Cookie', $cookie);
-            /* @var Cookie $cookie */
             if ($cookie->getName() == $deviceView->getCookieKey()) {
                 $this->assertEquals(DeviceView::VIEW_MOBILE, $cookie->getValue());
             }
@@ -418,13 +400,12 @@ class DeviceViewTest extends TestCase
         $deviceView->setCookieSecure(true);
         $deviceView->setCookieHttpOnly(false);
 
-        $response = $deviceView->getRedirectResponse(DeviceView::VIEW_MOBILE, 'http://mobilesite.com', 302);
+        $response = $deviceView->getRedirectResponse(DeviceView::VIEW_MOBILE, 'https://mobilesite.com', 302);
         $this->assertInstanceOf('SunCat\MobileDetectBundle\Helper\RedirectResponseWithCookie', $response);
         $this->assertEquals(302, $response->getStatusCode());
 
-        /** @var Cookie[] $cookies */
         $cookies = $response->headers->getCookies();
-        $this->assertEquals(1, count($cookies));
+        $this->assertCount(1, $cookies);
         $this->assertEquals('/test', $cookies[0]->getPath());
         $this->assertEquals('example.com', $cookies[0]->getDomain());
         $this->assertTrue($cookies[0]->isSecure());
