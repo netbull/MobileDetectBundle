@@ -41,7 +41,8 @@ class DeviceDataCollector extends DataCollector
         Request $request,
         Response $response,
         Throwable|null $exception = null
-    ) {
+    ): void
+    {
         $this->data['currentView'] = $this->deviceView->getViewType();
         $this->data['views'] = array(
             array(
@@ -88,7 +89,7 @@ class DeviceDataCollector extends DataCollector
         return $this->data['views'];
     }
 
-    public function setRedirectConfig(array $redirectConfig)
+    public function setRedirectConfig(array $redirectConfig): void
     {
         $this->redirectConfig = $redirectConfig;
     }
@@ -155,7 +156,7 @@ class DeviceDataCollector extends DataCollector
         return $requestSwitchView->getUri();
     }
 
-    public function reset()
+    public function reset(): void
     {
         $this->data = [];
     }
