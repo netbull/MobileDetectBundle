@@ -1,3 +1,10 @@
+## [7.0.2](https://github.com/netbull/MobileDetectBundle/compare/v7.0.1...v7.0.2) (2025-05-23)
+
+
+### Bug Fixes
+
+* deprecation ([990c490](https://github.com/netbull/MobileDetectBundle/commit/990c490adc40284a2c808785ba8e73ec4fb40e2b))
+
 ## [7.0.1](https://github.com/netbull/MobileDetectBundle/compare/v7.0.0...v7.0.1) (2025-05-23)
 
 
