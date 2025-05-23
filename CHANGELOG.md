@@ -1,3 +1,32 @@
+# [6.0.0](https://github.com/netbull/MobileDetectBundle/compare/v5.2.0...v6.0.0) (2025-05-22)
+
+
+### Bug Fixes
+
+* code_checks ([15b78fd](https://github.com/netbull/MobileDetectBundle/commit/15b78fd3eacadb2a1a88f8431151c6c11e47b97e))
+* code_checks ([1bfce3f](https://github.com/netbull/MobileDetectBundle/commit/1bfce3f333068d2cddf27f6292fb25db9b39bae7))
+* Deprecated: http_build_query(): Passing null to parameter [#2](https://github.com/netbull/MobileDetectBundle/issues/2) ($numeric_prefix) of type string is deprecated ([29c0845](https://github.com/netbull/MobileDetectBundle/commit/29c0845db035855ad15462f98866f8323c2d4373))
+* tests ([eea0206](https://github.com/netbull/MobileDetectBundle/commit/eea020659d72d55c5675a9320f41ebfb40340bc9))
+* tests ([902abe7](https://github.com/netbull/MobileDetectBundle/commit/902abe7b0c7667af9ec81fec559d5b1a21458f60))
+* Update .travis.yml ([28c287f](https://github.com/netbull/MobileDetectBundle/commit/28c287f96e8dc6985f247c4e324f21d7801362ec))
+* Update code_checks.yaml ([1f6644a](https://github.com/netbull/MobileDetectBundle/commit/1f6644a862d437f141414e7de3950e1d971b4198))
+* Update code_coverage.yaml ([9a7d53c](https://github.com/netbull/MobileDetectBundle/commit/9a7d53c122d330f0218448e931fb1acdfc945a76))
+
+
+### chore
+
+* bump versions ([c1518bd](https://github.com/netbull/MobileDetectBundle/commit/c1518bd5b741dbe687d24c41ffbccc1117fcf448))
+
+
+### Features
+
+* bump symfony versions ([57806d2](https://github.com/netbull/MobileDetectBundle/commit/57806d2e1cf7e9111ee69de28beb1544d3b33505))
+
+
+### BREAKING CHANGES
+
+* bump versions
+
 # [5.2.0](https://github.com/netbull/MobileDetectBundle/compare/v5.1.5...v5.2.0) (2022-07-07)
 
 
