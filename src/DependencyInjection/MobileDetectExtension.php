@@ -11,6 +11,7 @@
 
 namespace SunCat\MobileDetectBundle\DependencyInjection;
 
+use Exception;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\Extension;
@@ -19,10 +20,12 @@ use Symfony\Component\DependencyInjection\Loader;
 class MobileDetectExtension extends Extension
 {
     /**
-     * {@inheritDoc}
-     * @throws \Exception
+     * @param array $configs
+     * @param ContainerBuilder $container
+     * @return void
+     * @throws Exception
      */
-    public function load(array $configs, ContainerBuilder $container)
+    public function load(array $configs, ContainerBuilder $container): void
     {
         $configuration = new Configuration();
         $config = $this->processConfiguration($configuration, $configs);
